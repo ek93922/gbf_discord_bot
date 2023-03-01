@@ -4,11 +4,12 @@ import math
 import discord
 import gbf_wiki
 
+
 # Token needs str
-BOT_TOKEN = INSERT BOT TOKEN HERE
+BOT_TOKEN = 
 
 # Channel ID must be int
-CHANNEL_ID = INSERT CHANNEL ID HERE
+CHANNEL_ID = 
 
 bot = commands.Bot(command_prefix= "!", intents= discord.Intents.all())
 
@@ -42,55 +43,20 @@ async def test(ctx):
 
 @bot.command()
 async def current(ctx):
-
-    cur_evt_list, start_time, end_time, timestamp = gbf_wiki.GbfWiki.cur_event()
-    
-    speech = '>>> Current Events\n--------------------------------------\n'
-    
-    # For showing current events. Check if the event has started or will start soon.
-    # Use current dynamic timestamp and subtract start dynamic timestamp
-    # If the value is - then it started, if the value is + then it will start soon.
-    i = 0
-    while i < len(cur_evt_list):
-        delta = timestamp - int(start_time[i])
-        ts1 = datetime.fromtimestamp(timestamp)
-
-        if delta < 0:
-            ts2 = datetime.fromtimestamp(int(start_time[i]))
-            delta = ts2 - ts1
-            d = int(delta.days)
-            h = math.trunc(delta.seconds/3600)
-            if d < 1:
-                speech += (f'**{cur_evt_list[i]}** starts in {h}h (<t:{start_time[i]}:f>)\n')
-            else:    
-                speech += (f'**{cur_evt_list[i]}** starts in {d}d {h}h (<t:{start_time[i]}:f>)\n')
-        else:
-            ts2 = datetime.fromtimestamp(int(end_time[i]))
-            delta = ts2 - ts1
-            d = delta.days
-            h = math.trunc(delta.seconds/3600)
-            if d < 1:
-                speech += (f'**{cur_evt_list[i]}** will end in {h}h (<t:{end_time[i]}:f>)\n')
-            else:
-                speech += (f'**{cur_evt_list[i]}** will end in {d}d {h}h (<t:{end_time[i]}:f>)\n')
-        i += 1
-
+    speech = gbf_wiki.GbfWiki.cur_event()
     
     await ctx.send(speech)
 
 @bot.command()
 async def upcoming(ctx):
-    speech = '''>>> Upcoming Events\n--------------------------------------\n'''
-    up_event = gbf_wiki.GbfWiki.up_event()
-    for event in up_event:
-        start_date = up_event[event][0]
-        speech += f'**{event}** starts on <t:{start_date}>\n'
+    speech = gbf_wiki.GbfWiki.up_event()
 
     await ctx.send(speech)
 
 @bot.command()
 async def search(ctx, *, arg):
     speech = gbf_wiki.GbfWiki.search(arg)
+    
     await ctx.send(speech)
 
 

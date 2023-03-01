@@ -47,7 +47,37 @@ class GbfWiki:
                 start_time.append(span.get("data-start"))
                 end_time.append(span.get("data-end"))
 
-        return cur_evt_list, start_time, end_time, timestamp
+        speech = '>>> Current Events\n--------------------------------------\n'
+
+        # For showing current events. Check if the event has started or will start soon.
+        # Use current dynamic timestamp and subtract start dynamic timestamp
+        # If the value is - then it started, if the value is + then it will start soon.
+        i = 0
+        while i < len(cur_evt_list):
+            delta = timestamp - int(start_time[i])
+            ts1 = datetime.fromtimestamp(timestamp)
+
+            if delta < 0:
+                ts2 = datetime.fromtimestamp(int(start_time[i]))
+                delta = ts2 - ts1
+                d = int(delta.days)
+                h = math.trunc(delta.seconds/3600)
+                if d < 1:
+                    speech += (f'**{cur_evt_list[i]}** starts in {h}h (<t:{start_time[i]}:f>)\n')
+                else:    
+                    speech += (f'**{cur_evt_list[i]}** starts in {d}d {h}h (<t:{start_time[i]}:f>)\n')
+            else:
+                ts2 = datetime.fromtimestamp(int(end_time[i]))
+                delta = ts2 - ts1
+                d = delta.days
+                h = math.trunc(delta.seconds/3600)
+                if d < 1:
+                    speech += (f'**{cur_evt_list[i]}** will end in {h}h (<t:{end_time[i]}:f>)\n')
+                else:
+                    speech += (f'**{cur_evt_list[i]}** will end in {d}d {h}h (<t:{end_time[i]}:f>)\n')
+            i += 1
+
+            return speech
 
     # * Upcoming Events *
     def up_event():
@@ -93,7 +123,12 @@ class GbfWiki:
 
             up_evt_sch[entry_name] = up_evt_time
 
-        return up_evt_sch
+        speech = '''>>> Upcoming Events\n--------------------------------------\n'''
+        for event in up_evt_sch:
+            start_date = up_evt_sch[event][0]
+            speech += f'**{event}** starts on <t:{start_date}>\n'
+        
+        return speech
 
     # Returns wiki page relevant to user's input
     def search(user_input):
