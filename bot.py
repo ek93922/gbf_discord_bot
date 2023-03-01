@@ -4,7 +4,11 @@ import math
 import discord
 import gbf_wiki
 
+# Token needs str
+BOT_TOKEN = INSERT BOT TOKEN HERE
 
+# Channel ID must be int
+CHANNEL_ID = INSERT CHANNEL ID HERE
 
 bot = commands.Bot(command_prefix= "!", intents= discord.Intents.all())
 
